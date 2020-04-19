@@ -1,4 +1,5 @@
-# import numpy as np
+import numpy as np
+
 
 def generateMatrix(file_name):
     f = open('inputs/' + file_name, 'r')
