@@ -23,28 +23,18 @@ def dijkstraSet(G):
     cities = set()
     vertexSet = set()
     vertexSet.update(G.nodes)
-    # G.nodes
-    print("vertex set:")
-    print(vertexSet)
-    # print("")
-    # place for later optimization with randomly selecting vertex from upper quartile
     degreeSort = sorted(G.degree, key=lambda x: x[1], reverse=True)
-    # print("sorted degrees")
-    # print(degreeSort)
+  
 
     maximum = degreeSort[0][0]
     T.add_node(maximum)
     towers.add(maximum)
     vertexSet.remove(maximum)
     for v in G.neighbors(maximum):
-        cities.add(v)
-        # vertexSet.remove(v)
-    
+        cities.add(v)    
 
     while len(vertexSet) != 0:
-        heap = []
         start = random.sample(vertexSet, 1)
-        # print(start[0])
         value = math.inf
         node = []
         for s, end, weight in G.edges(start, data=True):
@@ -117,8 +107,6 @@ def dijkstraSet(G):
                     cities.add(start[0])
             # print(vertexSet)
             # print(T.nodes)
-
-
     return T
 
 
