@@ -9,10 +9,26 @@ Therefore, it can run repeatedly and the minimum solution is picked as the optim
 This is the best approximation of the actual solution.
 """
 
-def minset():
+import parse
+import os
+
+def minset(G):
     return None
 
-def connected():
+def isValidSolution():
+    """
+    1. Check if the towers are connected. (The vertices in the min set cover are connected)
+    2. Check if the towers cover all cities (The min set cover is valid)
+    """
     return True
 
-def 
+def main():
+    for input in os.listdir('inputs'):
+        if parse.validate_file('inputs/' + input):
+            graph = parse.read_input_file('inputs/' + input)
+            solution = minset(graph)
+            solution = parse.read_output_file(solution, graph)
+            outputFilename = 'outputs/' + os.path.splitext(input)[0] + '.out'
+            parse.write_output_file(solution, outputFilename)
+        else:
+            print('Invalid File:', str(input))
