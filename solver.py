@@ -2,6 +2,11 @@ import networkx as nx
 from parse import read_input_file, read_output_file, write_output_file
 from utils import is_valid_network, average_pairwise_distance
 import sys
+import random
+from random import choice
+import heapq
+import math
+import matplotlib.pyplot as plt
 import os
 import random
 from pqdict import pqdict
