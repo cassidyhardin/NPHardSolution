@@ -22,6 +22,7 @@ def isValidSolution():
     """
     return True
 
+<<<<<<< HEAD
 def main():
     for input in os.listdir('inputs'):
         if parse.validate_file('inputs/' + input):
@@ -32,3 +33,6 @@ def main():
             parse.write_output_file(solution, outputFilename)
         else:
             print('Invalid File:', str(input))
+=======
+
+>>>>>>> e40bcea1ca001efed677882bdd3c6e94f17a5d6e

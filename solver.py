@@ -7,7 +7,7 @@ import random
 from pqdict import pqdict
 
 
-def solve(G):
+def dijkstraSet(G):
     """
     Args:
         G: networkx.Graph
@@ -15,7 +15,12 @@ def solve(G):
     Returns:
         T: networkx.Graph
     """
-
+    T = nx.Graph()
+    towers = set()
+    cities = set()
+    vertexSet = set()
+    vertexSet.update(G.nodes)
+    degreeSort = sorted(G.degree, key=lambda x: x[1], reverse=True)g
     # TODO: your code here!
     return RajivMishraAlgorithm(G)
 # Here's an example of how to run your solver.
