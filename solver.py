@@ -9,7 +9,7 @@ import math
 import matplotlib.pyplot as plt
 import os
 import random
-from pqdict import pqdict
+# from pqdict import pqdict
 
 
 def one_by_one(s, l):
