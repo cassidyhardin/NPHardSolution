@@ -113,6 +113,10 @@ def RajivMishraAlgorithm(G):
             if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star):
                 if average_pairwise_distance(T_star) < average_pairwise_distance(T):
                     T.remove_node(solution_vertex)
+                else:
+                    T_star.add_node(solution_vertex)
+                    for (u, v, wt) in G.edges.data('weight'):
+                        T_star.add_edge(u, v, weight=wt)
 
         avg_dist = average_pairwise_distance(T)
         if avg_dist < T_min_score:
@@ -152,6 +156,7 @@ if __name__ == "__main__":
             write_output_file(T, f"{output_dir}/{graph_name}.out")
         else:
             print(graph_name)
+        break
 
 def combine_outputs():
     output_dir = "outputs"
