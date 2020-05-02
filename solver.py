@@ -29,6 +29,10 @@ def RajivMishraAlgorithm(G):
         T.add_node(vertice_degrees[0][0])
         return T
 
+    avg_outgoing_edge_cost = {}
+    for v in all_vertices:
+        avg_outgoing_edge_cost[v] =
+
     def score(vertex):
         return (vertex_degrees[vertex][1])
     # vertices_scored
