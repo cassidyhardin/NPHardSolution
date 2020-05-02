@@ -6,6 +6,7 @@ import os
 import random
 from pqdict import pqdict
 import matplotlib.pyplot as plt
+from multiprocessing import Process
 # Here's an example of how to run your solver.
     # nx.draw(T_Output)  # networkx draw()
     # nx.draw(T_MST_1)
@@ -28,13 +29,17 @@ def RajivMishraAlgorithm(G):
         T.add_node(vertice_degrees[0][0])
         return T
 
+    def score(vertex):
+        return (vertex_degrees[vertex][1])
+    # vertices_scored
+
     # add all the edges in both directions
     w = nx.get_edge_attributes(G, 'weight')
     temp = w.keys()
     for i in list(temp):
         w[(i[1], i[0])] = w[i]
 
-    slice = noOfVertices
+    slice = min(20, noOfVertices)
 
     T_Output = nx.Graph()
     T_min_score = float('inf')
@@ -124,7 +129,7 @@ def RajivMishraAlgorithm(G):
 
 if __name__ == "__main__":
     output_dir = "outputs"
-    input_dir = "inputs"
+    input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
         G = read_input_file(f"{input_dir}/{input_path}")
@@ -135,12 +140,14 @@ if __name__ == "__main__":
         new = average_pairwise_distance(T)
         if new < old:
             write_output_file(T, f"{output_dir}/{graph_name}.out")
+        else:
+            print(graph_name)
 
 def combine_outputs():
     output_dir = "outputs"
     output_Avik = "outputsAvik"
-    output_Cassidy = "outputsAvik"
-    output_Raghav = "outputsAvik"
+    output_Cassidy = "outputsCassudy"
+    output_Raghav = "outputsRaghav"
     input_dir = "inputs"
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
