@@ -353,7 +353,7 @@ def dijkstraSet(G):
 
 if __name__ == '__main__' :
     output_dir = "cassidyoutputs"
-    input_dir = "inputs"
+    input_dir = "smalls"
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
         print(graph_name)
