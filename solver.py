@@ -249,8 +249,8 @@ def dijkstraSet(G):
                 vertexSet.remove(start[0])
                 if start[0] not in cities:
                     cities.add(start[0])
-            # print(vertexSet)
-            # print(T.nodes)
+            print(vertexSet)
+            print(T.nodes)
     return T
 
 # Here's an example of how to run your solver.
