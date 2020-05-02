@@ -6,7 +6,7 @@ import os
 import random
 from pqdict import pqdict
 import matplotlib.pyplot as plt
-from multiprocessing import Process
+# from multiprocessing import Process
 # Here's an example of how to run your solver.
     # nx.draw(T_Output)  # networkx draw()
     # nx.draw(T_MST_1)
@@ -29,9 +29,9 @@ def RajivMishraAlgorithm(G):
         T.add_node(vertice_degrees[0][0])
         return T
 
-    avg_outgoing_edge_cost = {}
-    for v in all_vertices:
-        avg_outgoing_edge_cost[v] =
+    # avg_outgoing_edge_cost = {}
+    # for v in all_vertices:
+    #     avg_outgoing_edge_cost[v] =
 
     def score(vertex):
         return (vertex_degrees[vertex][1])
@@ -107,6 +107,12 @@ def RajivMishraAlgorithm(G):
             T.add_edge(selected_edge[0], selected_edge[1], weight=w.get(selected_edge))
             T_star.add_node(selected_node)
             T_star.add_edge(selected_edge[0], selected_edge[1], weight=w.get(selected_edge))
+
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star):
+                if average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                    T.remove_node(solution_vertex)
 
         avg_dist = average_pairwise_distance(T)
         if avg_dist < T_min_score:
