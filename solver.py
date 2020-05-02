@@ -362,8 +362,8 @@ if __name__ == '__main__' :
 
         # Tavik = solve(G1)
         Tcassidy = dijkstraSet(G2)
-        assert is_valid_network(G2, Tcassidy)
+        if is_valid_network(G2, Tcassidy):
         # print("Avik MST: Average pairwise distance: {}".format(average_pairwise_distance(Tavik)))
-        print("Cassidy Dijkstra: Average pairwise distance: {}".format(average_pairwise_distance(Tcassidy)))
+            print("Cassidy Dijkstra: Average pairwise distance: {}".format(average_pairwise_distance(Tcassidy)))
         # nx.draw(T)
-        write_output_file(Tcassidy, f"{output_dir}/{graph_name}.out")
+            write_output_file(Tcassidy, f"{output_dir}/{graph_name}.out")
