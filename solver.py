@@ -5,26 +5,12 @@ import sys
 import os
 import random
 from pqdict import pqdict
-
-
-def dijkstraSet(G):
-    """
-    Args:
-        G: networkx.Graph
-
-    Returns:
-        T: networkx.Graph
-    """
-    T = nx.Graph()
-    towers = set()
-    cities = set()
-    vertexSet = set()
-    vertexSet.update(G.nodes)
-    degreeSort = sorted(G.degree, key=lambda x: x[1], reverse=True)g
-    # TODO: your code here!
-    return RajivMishraAlgorithm(G)
+import matplotlib.pyplot as plt
 # Here's an example of how to run your solver.
-
+    # nx.draw(T_Output)  # networkx draw()
+    # nx.draw(T_MST_1)
+    # plt.draw()  # pyplot draw()
+    # plt.show()
 # Usage: python3 solver.py test.in
 
 def RajivMishraAlgorithm(G):
@@ -48,7 +34,7 @@ def RajivMishraAlgorithm(G):
     for i in list(temp):
         w[(i[1], i[0])] = w[i]
 
-    slice = min(10, noOfVertices)
+    slice = noOfVertices
 
     T_Output = nx.Graph()
     T_min_score = float('inf')
@@ -90,6 +76,15 @@ def RajivMishraAlgorithm(G):
                             minimum_edge[n] = (tree_node, n)
                         T_star.remove_edge(tree_node, n)
                         T_star.remove_node(n)
+                    else:
+                        for common_v in list(nx.common_neighbors(T, tree_node, n)):
+                            if common_v in nx.nodes(T):
+                                old = w.get((common_v, n))
+                                new = w.get((tree_node, n))
+                                if new < old:
+                                    T.remove_edge(common_v, n)
+                                    T.add_edge(tree_node, n, weight=new)
+
             selected_node = running_cost.pop()
             selected_edge = minimum_edge[selected_node]
 
@@ -100,16 +95,31 @@ def RajivMishraAlgorithm(G):
                     remaining_vertices.remove(neigh)
 
             T.add_node(selected_node)
-            T.add_edges_from([selected_edge])
+            T.add_edge(selected_edge[0], selected_edge[1], weight=w.get(selected_edge))
             T_star.add_node(selected_node)
-            T_star.add_edges_from([selected_edge])
+            T_star.add_edge(selected_edge[0], selected_edge[1], weight=w.get(selected_edge))
 
         avg_dist = average_pairwise_distance(T)
         if avg_dist < T_min_score:
             T_Output = nx.Graph()
             T_Output.add_nodes_from(T)
-            T_Output.add_edges_from(T.edges)
+            T_Output.add_weighted_edges_from(T.edges.data('weight'))
             T_min_score = avg_dist
+
+    # T_towers = nx.subgraph(G, nx.nodes(T_Output))
+    # print([i for i in T_towers.edges.data('weight') if i not in T.edges.data('weight')])
+    # print(T_towers.edges.data('weight'))
+    # T_MST_1 = nx.minimum_spanning_tree(T_towers, algorithm='kruskal')
+    # print('Kruskal:', [i for i in T_MST_1.edges.data('weight')])
+    # T_MST_2 = nx.minimum_spanning_tree(T_towers, algorithm='prim')
+    # T_MST_3 = nx.minimum_spanning_tree(T_towers, algorithm='boruvka')
+    # min_MST = min([T_MST_1, T_MST_2, T_MST_3], key = lambda x : average_pairwise_distance(x))
+    # print('MST:', average_pairwise_distance(min_MST))
+    # print('Non MST:', T_min_score)
+    # if average_pairwise_distance(min_MST) < T_min_score:
+    #     T_Output = nx.Graph()
+    #     T_Output.add_nodes_from(min_MST)
+    #     T_Output.add_weighted_edges_from(min_MST.edges.data('weight'))
     return T_Output
 
 if __name__ == "__main__":
@@ -118,6 +128,26 @@ if __name__ == "__main__":
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
         G = read_input_file(f"{input_dir}/{input_path}")
-        T = solver(G)
-        #print("Average  pairwise distance: {}".format(average_pairwise_distance(T)))
+        T = RajivMishraAlgorithm(G)
+        # print('Output Graph:', average_pairwise_distance(T))
+        old_T = read_output_file(f"{output_dir}/{graph_name}.out", G)
+        old = average_pairwise_distance(old_T)
+        new = average_pairwise_distance(T)
+        if new < old:
+            write_output_file(T, f"{output_dir}/{graph_name}.out")
+
+def combine_outputs():
+    output_dir = "outputs"
+    output_Avik = "outputsAvik"
+    output_Cassidy = "outputsAvik"
+    output_Raghav = "outputsAvik"
+    input_dir = "inputs"
+    for input_path in os.listdir(input_dir):
+        graph_name = input_path.split(".")[0]
+        G = read_input_file(f"{input_dir}/{input_path}")
+        Avik_T = read_output_file(f"{output_Avik}/{graph_name}.out", G)
+        Cassidy_T = read_output_file(f"{output_Cassidy}/{graph_name}.out", G)
+        Raghav_T = read_output_file(f"{output_Raghav}/{graph_name}.out", G)
+
+        T = min([Avik_T, Cassidy_T, Raghav_T], key = lambda x: average_pairwise_distance(x))
         write_output_file(T, f"{output_dir}/{graph_name}.out")
