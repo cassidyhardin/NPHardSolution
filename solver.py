@@ -171,7 +171,7 @@ def dijkstraSet(G):
   
     for v in degreeSort:
         T = nx.Graph()
-        maximum = v[0][0]
+        maximum = v
         T.add_node(maximum)
         towers.add(maximum)
         vertexSet.remove(maximum)
