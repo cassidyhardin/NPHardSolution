@@ -156,7 +156,7 @@ def RajivMishraAlgorithm(G):
     return T_Output
 
 if __name__ == "__main__":
-    output_dir = "outputs 2"
+    output_dir = "outputs_2"
     output_d = "outputs"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
@@ -168,9 +168,11 @@ if __name__ == "__main__":
         old = average_pairwise_distance(old_T)
         new = average_pairwise_distance(T)
         if new < old:
-            print(graph_name, old - new)
-            write_output_file(T, f"{output_dir}/{graph_name}.out")
-            break
+            if is_valid_network(G, T):
+                print(graph_name, old - new)
+                write_output_file(T, f"{output_dir}/{graph_name}.out")
+            else:
+                print(graph_name, 'new solution invalid')
         else:
             print(graph_name)
 
