@@ -29,19 +29,27 @@ def RajivMishraAlgorithm(G):
         T.add_node(vertice_degrees[0][0])
         return T
 
-    # avg_outgoing_edge_cost = {}
-    # for v in all_vertices:
-    #     avg_outgoing_edge_cost[v] =
-
-    def score(vertex):
-        return (vertex_degrees[vertex][1])
-    # vertices_scored
 
     # add all the edges in both directions
     w = nx.get_edge_attributes(G, 'weight')
     temp = w.keys()
     for i in list(temp):
         w[(i[1], i[0])] = w[i]
+
+    avg_outgoing_edge_cost = {}
+    for v in all_vertices:
+        total = 0.0
+        count = 0.0
+        for n in nx.neighbors(G, v):
+            total += w.get((v, n))
+            count += 1
+        avg_outgoing_edge_cost[v] = total/count
+
+    def score(vertex):
+        return (vertice_degrees[vertex][1])/avg_outgoing_edge_cost[vertex]
+
+    sorted_vertices = sorted(all_vertices, key = lambda x: score(x), reverse = True)
+    # vertices_sorted_by_scores
 
     slice = min(30, noOfVertices)
 
@@ -56,7 +64,7 @@ def RajivMishraAlgorithm(G):
         remaining_vertices = set()
         remaining_vertices.update(list(nx.nodes(G)))
 
-        starting_node = vertice_degrees[iter][0]
+        starting_node = sorted_vertices[iter]
         towers.add(starting_node)
         covered_vertices_count[starting_node] = covered_vertices_count.get(starting_node, 0) + 1
         remaining_vertices.remove(starting_node)
@@ -79,7 +87,7 @@ def RajivMishraAlgorithm(G):
                         T_star.add_edge(tree_node, n, weight=w[(tree_node, n)])
                         new_neighbor = nx.neighbors(G, n)
                         unique_neighbor = [i for i in new_neighbor if i not in covered_vertices]
-                        cost = average_pairwise_distance(T_star)/(1.0 + len(unique_neighbor))
+                        cost = average_pairwise_distance(T_star)/((1.0 + len(unique_neighbor))*score(n))
                         if cost < running_cost.get(n, float('inf')):
                             running_cost[n] = cost
                             minimum_edge[n] = (tree_node, n)
@@ -148,18 +156,21 @@ def RajivMishraAlgorithm(G):
     return T_Output
 
 if __name__ == "__main__":
-    output_dir = "outputs"
+    output_dir = "outputs 2"
+    output_d = "outputs"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
         G = read_input_file(f"{input_dir}/{input_path}")
         T = RajivMishraAlgorithm(G)
         # print('Output Graph:', average_pairwise_distance(T))
-        old_T = read_output_file(f"{output_dir}/{graph_name}.out", G)
+        old_T = read_output_file(f"{output_d}/{graph_name}.out", G)
         old = average_pairwise_distance(old_T)
         new = average_pairwise_distance(T)
         if new < old:
+            print(graph_name, old - new)
             write_output_file(T, f"{output_dir}/{graph_name}.out")
+            break
         else:
             print(graph_name)
 
