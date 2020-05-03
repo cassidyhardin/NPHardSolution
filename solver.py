@@ -156,7 +156,7 @@ def RajivMishraAlgorithm(G):
     return T_Output
 
 if __name__ == "__main__":
-    output_dir = "outputs 2"
+    output_dir = "outputs_2"
     output_d = "outputs"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
