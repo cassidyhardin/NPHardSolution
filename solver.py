@@ -110,8 +110,8 @@ def RajivMishraAlgorithm(G):
             T_star.add_node(selected_node)
             T_star.add_edge(selected_edge[0], selected_edge[1], weight=w.get(selected_edge))
 
-        print('Before T:', T.nodes, T.edges)
-        print('Before T_star:', T_star.nodes, T_star.edges)
+        # print('Before T:', T.nodes, T.edges)
+        # print('Before T_star:', T_star.nodes, T_star.edges)
         for solution_vertex in list(nx.nodes(T)):
             T_star.remove_node(solution_vertex)
             if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
@@ -122,8 +122,8 @@ def RajivMishraAlgorithm(G):
                     if u == solution_vertex or v == solution_vertex:
                         T_star.add_edge(u, v, weight=wt)
 
-        print('After T:', T.nodes, T.edges)
-        print('After T_star:', T_star.nodes, T_star.edges)
+        # print('After T:', T.nodes, T.edges)
+        # print('After T_star:', T_star.nodes, T_star.edges)
         avg_dist = average_pairwise_distance(T)
         if avg_dist < T_min_score:
             T_Output = nx.Graph()
