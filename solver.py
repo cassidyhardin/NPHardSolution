@@ -93,6 +93,8 @@ def RajivMishraAlgorithm(G):
                                 if new < old:
                                     T.remove_edge(common_v, n)
                                     T.add_edge(tree_node, n, weight=new)
+                                    T_star.remove_edge(common_v, n)
+                                    T_star.add_edge(tree_node, n, weight=new)
 
             selected_node = running_cost.pop()
             selected_edge = minimum_edge[selected_node]
@@ -108,17 +110,20 @@ def RajivMishraAlgorithm(G):
             T_star.add_node(selected_node)
             T_star.add_edge(selected_edge[0], selected_edge[1], weight=w.get(selected_edge))
 
+        print('Before T:', T.nodes, T.edges)
+        print('Before T_star:', T_star.nodes, T_star.edges)
         for solution_vertex in list(nx.nodes(T)):
             T_star.remove_node(solution_vertex)
-            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star):
-                if average_pairwise_distance(T_star) < average_pairwise_distance(T):
-                    T.remove_node(solution_vertex)
-                else:
-                    T_star.add_node(solution_vertex)
-                    for (u, v, wt) in T.edges.data('weight'):
-                        if u == solution_vertex or v == solution_vertex:
-                            T_star.add_edge(u, v, weight=wt)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
 
+        print('After T:', T.nodes, T.edges)
+        print('After T_star:', T_star.nodes, T_star.edges)
         avg_dist = average_pairwise_distance(T)
         if avg_dist < T_min_score:
             T_Output = nx.Graph()
