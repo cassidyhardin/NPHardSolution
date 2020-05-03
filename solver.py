@@ -213,7 +213,6 @@ if __name__ == "__main__":
                 print(graph_name, 'new solution invalid')
         else:
             print(graph_name)
-        break
 # def combine_outputs():
 #     output_dir = "outputs"
 #     output_Avik = "outputsAvik"
