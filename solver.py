@@ -273,7 +273,6 @@ def dijkstraSet(G):
     return minTree
 
 # Here's an example of how to run your solver.
-
 # Usage: python3 solver.py test.in
 
 # def RajivMishraAlgorithm(G):
