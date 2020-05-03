@@ -139,6 +139,7 @@ def RajivMishraAlgorithm(G):
             T_Output.add_weighted_edges_from(T.edges.data('weight'))
             T_min_score = avg_dist
 
+    T_Output = test(G, T_Output)
     # T_towers = nx.subgraph(G, nx.nodes(T_Output))
     # print([i for i in T_towers.edges.data('weight') if i not in T.edges.data('weight')])
     # print(T_towers.edges.data('weight'))
@@ -155,9 +156,46 @@ def RajivMishraAlgorithm(G):
     #     T_Output.add_weighted_edges_from(min_MST.edges.data('weight'))
     return T_Output
 
+def test(G, originalT):
+    T = nx.Graph()
+    T.add_nodes_from(originalT)
+    T.add_weighted_edges_from(originalT.edges.data('weight'))
+    T_star = nx.Graph()
+    T_star.add_nodes_from(originalT)
+    T_star.add_weighted_edges_from(originalT.edges.data('weight'))
+
+    old = average_pairwise_distance(originalT)
+    t_nodes = list(nx.nodes(T))
+    for u, v, w in G.edges.data('weight'):
+        cur = average_pairwise_distance(T)
+        if u in nx.nodes(T) and v not in nx.nodes(T):
+            T_star.add_node(v)
+            T_star.add_edge(u, v, weight=w)
+            if average_pairwise_distance(T_star) < cur:
+                T.add_node(v)
+                T.add_edge(u, v, weight=w)
+            else:
+                T_star.remove_edge(u, v)
+                T_star.remove_node(v)
+        elif v in nx.nodes(T) and u not in nx.nodes(T):
+            T_star.add_node(u)
+            T_star.add_edge(v, u, weight=w)
+            if average_pairwise_distance(T_star) < cur:
+                T.add_node(u)
+                T.add_edge(v, u, weight=w)
+            else:
+                T_star.remove_edge(v, u)
+                T_star.remove_node(u)
+    new = average_pairwise_distance(T)
+    if new < old and is_valid_network(G, T):
+        return T
+    else:
+        return originalT
+
+
 if __name__ == "__main__":
     output_dir = "outputs_2"
-    output_d = "outputs"
+    output_d = "outputsRaghav"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
@@ -175,19 +213,19 @@ if __name__ == "__main__":
                 print(graph_name, 'new solution invalid')
         else:
             print(graph_name)
-
-def combine_outputs():
-    output_dir = "outputs"
-    output_Avik = "outputsAvik"
-    output_Cassidy = "outputsCassudy"
-    output_Raghav = "outputsRaghav"
-    input_dir = "inputs"
-    for input_path in os.listdir(input_dir):
-        graph_name = input_path.split(".")[0]
-        G = read_input_file(f"{input_dir}/{input_path}")
-        Avik_T = read_output_file(f"{output_Avik}/{graph_name}.out", G)
-        Cassidy_T = read_output_file(f"{output_Cassidy}/{graph_name}.out", G)
-        Raghav_T = read_output_file(f"{output_Raghav}/{graph_name}.out", G)
-
-        T = min([Avik_T, Cassidy_T, Raghav_T], key = lambda x: average_pairwise_distance(x))
-        write_output_file(T, f"{output_dir}/{graph_name}.out")
+        break
+# def combine_outputs():
+#     output_dir = "outputs"
+#     output_Avik = "outputsAvik"
+#     output_Cassidy = "outputsCassudy"
+#     output_Raghav = "outputsRaghav"
+#     input_dir = "inputs"
+#     for input_path in os.listdir(input_dir):
+#         graph_name = input_path.split(".")[0]
+#         G = read_input_file(f"{input_dir}/{input_path}")
+#         Avik_T = read_output_file(f"{output_Avik}/{graph_name}.out", G)
+#         Cassidy_T = read_output_file(f"{output_Cassidy}/{graph_name}.out", G)
+#         Raghav_T = read_output_file(f"{output_Raghav}/{graph_name}.out", G)
+#
+#         T = min([Avik_T, Cassidy_T, Raghav_T], key = lambda x: average_pairwise_distance(x))
+#         write_output_file(T, f"{output_dir}/{graph_name}.out")
