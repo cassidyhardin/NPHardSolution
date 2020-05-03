@@ -43,7 +43,7 @@ def RajivMishraAlgorithm(G):
     for i in list(temp):
         w[(i[1], i[0])] = w[i]
 
-    slice = min(20, noOfVertices)
+    slice = min(30, noOfVertices)
 
     T_Output = nx.Graph()
     T_min_score = float('inf')
