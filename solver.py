@@ -16,7 +16,8 @@ from pqdict import pqdict
 import matplotlib.pyplot as plt
 
 
-def RajivMishraAlgorithm(G):
+
+def primMSTwithHeuristic(G):
     T = nx.Graph()
     G.remove_edges_from(nx.selfloop_edges(G))
 
@@ -32,12 +33,14 @@ def RajivMishraAlgorithm(G):
         return T
 
 
-    # add all the edges in both directions
+    # add all the edges in both directions in a dictionary
     w = nx.get_edge_attributes(G, 'weight')
     temp = w.keys()
     for i in list(temp):
         w[(i[1], i[0])] = w[i]
 
+    # calculate the average outgoing edge cost for every solution_vertex
+    # to be used with the
     avg_outgoing_edge_cost = {}
     for v in all_vertices:
         total = 0.0
@@ -47,18 +50,20 @@ def RajivMishraAlgorithm(G):
             count += 1
         avg_outgoing_edge_cost[v] = total/count
 
+    # Scoring function for nodes based on their degree and their outgoing edge cost
     def score(vertex):
         return (vertice_degrees[vertex][1])/avg_outgoing_edge_cost[vertex]
 
     sorted_vertices = sorted(all_vertices, key = lambda x: score(x), reverse = True)
     # vertices_sorted_by_scores
 
-    slice = min(30, noOfVertices)
+    noOfIterations = min(30, noOfVertices)
 
     T_Output = nx.Graph()
     T_min_score = float('inf')
 
-    for iter in range(slice):
+    # Run multiple iterations to get minimum output
+    for iter in range(noOfIterations):
         T = nx.Graph()
         T_star = nx.Graph()
         towers = set()
@@ -78,6 +83,7 @@ def RajivMishraAlgorithm(G):
         T.add_node(starting_node)
         T_star.add_node(starting_node)
 
+        # Run solution till it is a dominating set
         while(len(remaining_vertices) != 0):
             running_cost = pqdict()
             minimum_edge = dict()
@@ -89,6 +95,8 @@ def RajivMishraAlgorithm(G):
                         T_star.add_edge(tree_node, n, weight=w[(tree_node, n)])
                         new_neighbor = nx.neighbors(G, n)
                         unique_neighbor = [i for i in new_neighbor if i not in covered_vertices]
+                        # Cost serves as a heuristic
+                        # Can be improved by looking at more data, such as seeing more than 1 step ahead or only looking at outoing edge costs of edges to unique neighbors
                         cost = average_pairwise_distance(T_star)/((1.0 + len(unique_neighbor))*score(n))
                         if cost < running_cost.get(n, float('inf')):
                             running_cost[n] = cost
@@ -120,55 +128,37 @@ def RajivMishraAlgorithm(G):
             T_star.add_node(selected_node)
             T_star.add_edge(selected_edge[0], selected_edge[1], weight=w.get(selected_edge))
 
-        # print('Before T:', T.nodes, T.edges)
-        # print('Before T_star:', T_star.nodes, T_star.edges)
-        for solution_vertex in list(nx.nodes(T)):
-            T_star.remove_node(solution_vertex)
-            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
-                T.remove_node(solution_vertex)
-            else:
-                T_star.add_node(solution_vertex)
-                for (u, v, wt) in T.edges.data('weight'):
-                    if u == solution_vertex or v == solution_vertex:
-                        T_star.add_edge(u, v, weight=wt)
-        for solution_vertex in list(nx.nodes(T)):
-            T_star.remove_node(solution_vertex)
-            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
-                T.remove_node(solution_vertex)
-            else:
-                T_star.add_node(solution_vertex)
-                for (u, v, wt) in T.edges.data('weight'):
-                    if u == solution_vertex or v == solution_vertex:
-                        T_star.add_edge(u, v, weight=wt)
+        # Remove nodes from the solution as long as the solution stays valid
+        # The remval should reduce average pairwise distance reduces
+        # Keeps iterating till there is no improvement
+        change = float('inf')
+        while(change > 0):
+            originalAvgPairDist = average_pairwise_distance(T)
+            for solution_vertex in list(nx.nodes(T)):
+                T_star.remove_node(solution_vertex)
+                if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                    T.remove_node(solution_vertex)
+                else:
+                    T_star.add_node(solution_vertex)
+                    for (u, v, wt) in T.edges.data('weight'):
+                        if u == solution_vertex or v == solution_vertex:
+                            T_star.add_edge(u, v, weight=wt)
+            change = originalAvgPairDist - average_pairwise_distance(T)
 
-        T = test(G, T)
-        T = test(G, T)
-        # print('After T:', T.nodes, T.edges)
-        # print('After T_star:', T_star.nodes, T_star.edges)
+        T = addNodes(G, T)
+
         avg_dist = average_pairwise_distance(T)
+
+        # takes the final output as the minimum of all iterations
         if avg_dist < T_min_score:
             T_Output = nx.Graph()
             T_Output.add_nodes_from(T)
             T_Output.add_weighted_edges_from(T.edges.data('weight'))
             T_min_score = avg_dist
 
-    # T_towers = nx.subgraph(G, nx.nodes(T_Output))
-    # print([i for i in T_towers.edges.data('weight') if i not in T.edges.data('weight')])
-    # print(T_towers.edges.data('weight'))
-    # T_MST_1 = nx.minimum_spanning_tree(T_towers, algorithm='kruskal')
-    # print('Kruskal:', [i for i in T_MST_1.edges.data('weight')])
-    # T_MST_2 = nx.minimum_spanning_tree(T_towers, algorithm='prim')
-    # T_MST_3 = nx.minimum_spanning_tree(T_towers, algorithm='boruvka')
-    # min_MST = min([T_MST_1, T_MST_2, T_MST_3], key = lambda x : average_pairwise_distance(x))
-    # print('MST:', average_pairwise_distance(min_MST))
-    # print('Non MST:', T_min_score)
-    # if average_pairwise_distance(min_MST) < T_min_score:
-    #     T_Output = nx.Graph()
-    #     T_Output.add_nodes_from(min_MST)
-    #     T_Output.add_weighted_edges_from(min_MST.edges.data('weight'))
     return T_Output
 
-def test(G, originalT):
+def addNodes(G, originalT):
     T = nx.Graph()
     T.add_nodes_from(originalT)
     T.add_weighted_edges_from(originalT.edges.data('weight'))
@@ -178,6 +168,58 @@ def test(G, originalT):
 
     old = average_pairwise_distance(originalT)
     t_nodes = list(nx.nodes(T))
+    for u, v, w in G.edges.data('weight'):
+        cur = average_pairwise_distance(T)
+        if u in nx.nodes(T) and v not in nx.nodes(T):
+            T_star.add_node(v)
+            T_star.add_edge(u, v, weight=w)
+            if average_pairwise_distance(T_star) < cur:
+                T.add_node(v)
+                T.add_edge(u, v, weight=w)
+            else:
+                T_lvl2 = level2(G, T_star, cur)
+                if T_lvl2 == T_star:
+                    T_star.remove_edge(u, v)
+                    T_star.remove_node(v)
+                else:
+                    T = nx.Graph()
+                    T.add_nodes_from(T_lvl2)
+                    T.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+                    T_star = nx.Graph()
+                    T_star.add_nodes_from(T_lvl2)
+                    T_star.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+        elif v in nx.nodes(T) and u not in nx.nodes(T):
+            T_star.add_node(u)
+            T_star.add_edge(v, u, weight=w)
+            if average_pairwise_distance(T_star) < cur:
+                T.add_node(u)
+                T.add_edge(v, u, weight=w)
+            else:
+                T_lvl2 = level2(G, T_star, cur)
+                if T_lvl2 == T_star:
+                    T_star.remove_edge(v, u)
+                    T_star.remove_node(u)
+                else:
+                    T = nx.Graph()
+                    T.add_nodes_from(T_lvl2)
+                    T.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+                    T_star = nx.Graph()
+                    T_star.add_nodes_from(T_lvl2)
+                    T_star.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+    new = average_pairwise_distance(T)
+    if new < old and is_valid_network(G, T):
+        return T
+    else:
+        return originalT
+
+def level2(G, originalT, old):
+    T = nx.Graph()
+    T.add_nodes_from(originalT)
+    T.add_weighted_edges_from(originalT.edges.data('weight'))
+    T_star = nx.Graph()
+    T_star.add_nodes_from(originalT)
+    T_star.add_weighted_edges_from(originalT.edges.data('weight'))
+
     for u, v, w in G.edges.data('weight'):
         cur = average_pairwise_distance(T)
         if u in nx.nodes(T) and v not in nx.nodes(T):
@@ -495,10 +537,10 @@ if __name__ == '__main__' :
         graph_name = input_path.split(".")[0]
         print(graph_name)
         G = read_input_file(f"{input_dir}/{input_path}")
-        # Tmst = MST(G)
-        Tmst = RajivMishraAlgorithm(G)
+        Tmst = MST(G)
+        Tmst = primMSTwithHeuristic(G)
         Tds = dijkstraSet(G)
-        Tmishra = RajivMishraAlgorithm(G)
+        Tmishra = primMSTwithHeuristic(G)
         Tmin = nx.Graph()
         Gfinal = read_input_file(f"{input_dir}/{input_path}")
         if Tds.number_of_nodes() > 0:
@@ -518,6 +560,7 @@ if __name__ == '__main__' :
             else:
                 Tmin = Tmishra.copy()
         write_output_file(Tmin, f"{output_dir}/{graph_name}.out")
-        print("Minimum Average Pairwise Distance:" + average_pairwise_distance(Tmin))
+        print("Minimum Average Pairwise Distance:")
+        print(average_pairwise_distance(Tmin))
 
 
