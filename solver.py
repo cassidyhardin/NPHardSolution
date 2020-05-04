@@ -537,28 +537,28 @@ if __name__ == '__main__' :
         graph_name = input_path.split(".")[0]
         print(graph_name)
         G = read_input_file(f"{input_dir}/{input_path}")
-        Tmst = MST(G)
-        # Tmst = primMSTwithHeuristic(G)
+        # Tmst = MST(G)
+        Tmst = primMSTwithHeuristic(G)
         Tds = dijkstraSet(G)
-        Tmishra = primMSTwithHeuristic(G)
+        Tprim = primMSTwithHeuristic(G)
         Tmin = nx.Graph()
         Gfinal = read_input_file(f"{input_dir}/{input_path}")
         if Tds.number_of_nodes() > 0:
             if average_pairwise_distance(Tmst) < average_pairwise_distance(Tds):
-                if average_pairwise_distance(Tmst) < average_pairwise_distance(Tmishra): 
+                if average_pairwise_distance(Tmst) < average_pairwise_distance(Tprim): 
                     Tmin = Tmst.copy()
                 else:
-                    Tmin = Tmishra.copy()
+                    Tmin = Tprim.copy()
             else:
-                if average_pairwise_distance(Tds) < average_pairwise_distance(Tmishra): 
+                if average_pairwise_distance(Tds) < average_pairwise_distance(Tprim): 
                     Tmin = Tds.copy()
                 else:
-                    Tmin = Tmishra.copy()
+                    Tmin = Tprim.copy()
         else:
-            if average_pairwise_distance(Tmst) < average_pairwise_distance(Tmishra): 
+            if average_pairwise_distance(Tmst) < average_pairwise_distance(Tprim): 
                 Tmin = Tmst.copy()
             else:
-                Tmin = Tmishra.copy()
+                Tmin = Tprim.copy()
         write_output_file(Tmin, f"{output_dir}/{graph_name}.out")
         print("Minimum Average Pairwise Distance:")
         print(average_pairwise_distance(Tmin))
