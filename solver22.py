@@ -15,9 +15,12 @@ import random
 import matplotlib.pyplot as plt
 
 
+
 def one_by_one(s, l):
     for i in l:
         s.add(i)
+
+
 
 def MST(G):
     """
@@ -174,122 +177,10 @@ def node_in_vertices_covered_by_tree(node,tree,graph):
             vertice_set.add(neighbor)
             vertice_set.add(n)
     return node in vertice_set
+# Here's an example of how to run your solver.
 
-
-def dijkstraSet(G):
-    """
-    Args:
-        G: networkx.Graph
-    Returns:
-        T: networkx.Graph
-    """
-    minTree = nx.Graph()
-    towers = set()
-    cities = set()
-    vertexSet = set()
-    vertexSet.update(G.nodes)
-    degreeSort = sorted(G.degree, key=lambda x: x[1], reverse=True)
-    for x in range(1):
-        finalTree = nx.Graph()
-        for v in degreeSort:
-            towers = set()
-            cities = set()
-            vertexSet = set()
-            vertexSet.update(G.nodes)
-            T = nx.Graph()
-            maximum = v[0]
-            T.add_node(maximum)
-            towers.add(maximum)
-            vertexSet.remove(maximum)
-            for v in G.neighbors(maximum):
-                cities.add(v)    
-
-            while len(vertexSet) != 0:
-                start = random.sample(vertexSet, 1)
-                value = math.inf
-                node = []
-                for s, end, weight in G.edges(start, data=True):
-                    if end in cities:
-                        for city, tower, cost in G.edges(end, data=True):
-                            if tower in towers:
-                                temp = T.copy()
-                                temp.add_edge(tower, city, weight=cost['weight'])
-                                currCost = average_pairwise_distance(temp)
-                                if currCost < value:
-                                    node = []
-                                    value = currCost
-                                    test = (city, tower, cost)
-                                    node.append(test)
-                    for c in cities:
-                        common = nx.common_neighbors(G, c, end)
-                        if common is not None:
-                            for n in common:
-                                edgeNode = G.get_edge_data(end, n)
-                                for middle, city, cost1 in G.edges(n, data=True):
-                                    # find corresponding city
-                                    if city in cities:
-                                        for connection, tower, cost2 in G.edges(city, data=True):
-                                            if tower in towers:
-                                                temp = T.copy()
-                                                temp.add_edge(n, end, weight=edgeNode['weight'])
-                                                temp.add_edge(n, city, weight=cost1['weight'])
-                                                temp.add_edge(tower, city, weight=cost2['weight'])
-                                                currCost = average_pairwise_distance(temp)
-                                                if currCost < value:
-                                                    value = currCost
-                                                    node = []
-                                                    test = (end, n, edgeNode)
-                                                    node.append(test)
-                                                    test1 = (n, city, cost1)
-                                                    node.append(test1)
-                                                    test2 = (city, tower, cost2)
-                                                    node.append(test2)
-                if node is not None:  
-                    for pair in node:
-                        begin = pair[0]
-                        end = pair[1]
-                        weight = pair[2]
-                        cycleTest = T.copy()
-                        cycleTest.add_edge(begin, end, weight=weight['weight'])
-                        if not nx.is_tree(cycleTest):
-                            break
-                        T.add_edge(begin, end, weight=weight['weight'])
-                        if begin in cities: 
-                            cities.remove(begin)
-                        if end in cities:
-                            cities.remove(end)
-                        towers.add(begin)
-                        towers.add(end)
-                        if begin in vertexSet: 
-                            vertexSet.remove(begin)
-                        if end in vertexSet:
-                            vertexSet.remove(end)
-                        for v in G.neighbors(begin):
-                            if v not in towers: 
-                                if v not in cities:
-                                    cities.add(v)
-                        for v in G.neighbors(end):
-                            if v not in towers:
-                                if v not in cities:
-                                    cities.add(v)
-                    if start[0] in vertexSet:
-                        vertexSet.remove(start[0])
-                        if start[0] not in cities:
-                            cities.add(start[0])
-            if T.number_of_nodes() > 0 and is_valid_network(G, T):
-                if finalTree.number_of_nodes() > 0:
-                    if average_pairwise_distance(finalTree) > average_pairwise_distance(T):
-                        finalTree = T.copy()
-                else:
-                    finalTree = T.copy()
-        if is_valid_network(G, finalTree):
-            if minTree.number_of_nodes() > 0:
-                if average_pairwise_distance(minTree) >  average_pairwise_distance(finalTree):
-                    minTree = finalTree.copy()
-            else:
-                minTree = finalTree.copy()     
-    return minTree
-
+# Usage: python3 solver.py test.in
+#Combines outputs generated from all three og our algorithms
 def combine_outputs():
     output_dir = "outputs"
     output_Avik = "outputsAvik"
@@ -303,8 +194,6 @@ def combine_outputs():
         T = min([Avik_T,Raghav_T], key = lambda x: average_pairwise_distance(x))
         write_output_file(T, f"{output_dir}/{graph_name}.out")
         print("%s Written"%(graph_name))
-
-
 if __name__ == '__main__' :
     output_dir = "outputsAvik"
     input_dir = "inputs"
@@ -312,10 +201,9 @@ if __name__ == '__main__' :
         graph_name = input_path.split(".")[0]
         print(graph_name)
         G = read_input_file(f"{input_dir}/{input_path}")
-        Tmst = MST(G)
-        Tds = dijkstraSet(G)
-        
-        write_output_file(Tmin, f"{output_dir}/{graph_name}.out")
+        T = solve(G)
+        write_output_file(T, f"{output_dir}/{graph_name}.out")
     combine_outputs()
+
 
 
