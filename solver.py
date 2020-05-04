@@ -249,7 +249,6 @@ if __name__ == "__main__":
     output_d = "outputs"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
-        input_path = "small-1.in"
         graph_name = input_path.split(".")[0]
         G = read_input_file(f"{input_dir}/{input_path}")
         T = primMSTwithHeuristic(G)
@@ -264,7 +263,6 @@ if __name__ == "__main__":
                 print(graph_name, 'new solution invalid')
         else:
             print(graph_name)
-        break
 
 # def combine_outputs():
 #     output_dir = "outputs"
