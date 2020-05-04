@@ -6,17 +6,78 @@ import sys
 import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
-    output_dir = "outputs"
-    new_output_dir = "outputsRaghav"
+    output_dir = "outputs_3"
+    new_output_dir = "outputs_4"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
-        print(graph_name)
         G = read_input_file(f"{input_dir}/{input_path}")
         # print('Output Graph:', average_pairwise_distance(T))
         T = read_output_file(f"{output_dir}/{graph_name}.out", G)
         T_star = read_output_file(f"{output_dir}/{graph_name}.out", G)
         old = average_pairwise_distance(T)
+
+        subG = nx.subgraph(G, T.nodes)
+        T = nx.minimum_spanning_tree(subG, weight='weight', algorithm='prim')
+        T_star = nx.minimum_spanning_tree(G, weight='weight', algorithm='prim')
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
+
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
+
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
+
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
+
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
 
         t_nodes = list(nx.nodes(T))
         for u, v, w in G.edges.data('weight'):
@@ -40,11 +101,74 @@ if __name__ == "__main__":
                     T_star.remove_edge(v, u)
                     T_star.remove_node(u)
 
+        for u, v, w in G.edges.data('weight'):
+            cur = average_pairwise_distance(T)
+            if u in nx.nodes(T) and v not in nx.nodes(T):
+                T_star.add_node(v)
+                T_star.add_edge(u, v, weight=w)
+                if average_pairwise_distance(T_star) < cur:
+                    T.add_node(v)
+                    T.add_edge(u, v, weight=w)
+                else:
+                    T_star.remove_edge(u, v)
+                    T_star.remove_node(v)
+            elif v in nx.nodes(T) and u not in nx.nodes(T):
+                T_star.add_node(u)
+                T_star.add_edge(v, u, weight=w)
+                if average_pairwise_distance(T_star) < cur:
+                    T.add_node(u)
+                    T.add_edge(v, u, weight=w)
+                else:
+                    T_star.remove_edge(v, u)
+                    T_star.remove_node(u)
+
+        for u, v, w in G.edges.data('weight'):
+            cur = average_pairwise_distance(T)
+            if u in nx.nodes(T) and v not in nx.nodes(T):
+                T_star.add_node(v)
+                T_star.add_edge(u, v, weight=w)
+                if average_pairwise_distance(T_star) < cur:
+                    T.add_node(v)
+                    T.add_edge(u, v, weight=w)
+                else:
+                    T_star.remove_edge(u, v)
+                    T_star.remove_node(v)
+            elif v in nx.nodes(T) and u not in nx.nodes(T):
+                T_star.add_node(u)
+                T_star.add_edge(v, u, weight=w)
+                if average_pairwise_distance(T_star) < cur:
+                    T.add_node(u)
+                    T.add_edge(v, u, weight=w)
+                else:
+                    T_star.remove_edge(v, u)
+                    T_star.remove_node(u)
+
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
+
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
+
         new = average_pairwise_distance(T)
         if new < old:
             if is_valid_network(G, T):
+                print(graph_name, old - new)
                 write_output_file(T, f"{new_output_dir}/{graph_name}.out")
             else:
-                continue
+                print(graph_name, 'new solution invalid')
         else:
-            continue
+            print(graph_name, old, new)

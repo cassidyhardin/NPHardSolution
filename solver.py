@@ -129,7 +129,18 @@ def RajivMishraAlgorithm(G):
                 for (u, v, wt) in T.edges.data('weight'):
                     if u == solution_vertex or v == solution_vertex:
                         T_star.add_edge(u, v, weight=wt)
+        for solution_vertex in list(nx.nodes(T)):
+            T_star.remove_node(solution_vertex)
+            if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
+                T.remove_node(solution_vertex)
+            else:
+                T_star.add_node(solution_vertex)
+                for (u, v, wt) in T.edges.data('weight'):
+                    if u == solution_vertex or v == solution_vertex:
+                        T_star.add_edge(u, v, weight=wt)
 
+        T = test(G, T)
+        T = test(G, T)
         # print('After T:', T.nodes, T.edges)
         # print('After T_star:', T_star.nodes, T_star.edges)
         avg_dist = average_pairwise_distance(T)
@@ -139,7 +150,6 @@ def RajivMishraAlgorithm(G):
             T_Output.add_weighted_edges_from(T.edges.data('weight'))
             T_min_score = avg_dist
 
-    T_Output = test(G, T_Output)
     # T_towers = nx.subgraph(G, nx.nodes(T_Output))
     # print([i for i in T_towers.edges.data('weight') if i not in T.edges.data('weight')])
     # print(T_towers.edges.data('weight'))
@@ -194,8 +204,8 @@ def test(G, originalT):
 
 
 if __name__ == "__main__":
-    output_dir = "outputs_2"
-    output_d = "outputsRaghav"
+    output_dir = "outputs_3"
+    output_d = "outputs_3"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
@@ -213,6 +223,7 @@ if __name__ == "__main__":
                 print(graph_name, 'new solution invalid')
         else:
             print(graph_name)
+        break
 # def combine_outputs():
 #     output_dir = "outputs"
 #     output_Avik = "outputsAvik"
