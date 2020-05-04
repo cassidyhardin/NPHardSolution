@@ -168,8 +168,7 @@ def dijkstraSet(G):
     vertexSet = set()
     vertexSet.update(G.nodes)
     degreeSort = sorted(G.degree, key=lambda x: x[1], reverse=True)
-    # print(degreeSort[0][0])
-    for x in range(15):
+    for x in range(1):
         finalTree = nx.Graph()
         for v in degreeSort:
             towers = set()
@@ -256,8 +255,6 @@ def dijkstraSet(G):
                         vertexSet.remove(start[0])
                         if start[0] not in cities:
                             cities.add(start[0])
-                    # print(vertexSet)
-                    # print(T.nodes)
             if T.number_of_nodes() > 0 and is_valid_network(G, T):
                 if finalTree.number_of_nodes() > 0:
                     if average_pairwise_distance(finalTree) > average_pairwise_distance(T):
@@ -360,23 +357,13 @@ def dijkstraSet(G):
 #             T_min_score = avg_dist
 #     return T_Output
 
-# if __name__ == "__main__":
-#     output_dir = "outputs"
-#     input_dir = "inputs"
-#     for input_path in os.listdir(input_dir):
-#         graph_name = input_path.split(".")[0]
-#         G = read_input_file(f"{input_dir}/{input_path}")
-#         T = dijkstraSet(G)
-#         write_output_file(T, f"{output_dir}/{graph_name}.out")
-
-if __name__ == '__main__' :
-    output_dir = "cassidyoutputs"
-    input_dir = "BFsmalls"
+if __name__ == "__main__":
+    output_dir = "outputs"
+    input_dir = "inputs"
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
-        print(graph_name)
         G = read_input_file(f"{input_dir}/{input_path}")
-        Tcassidy = dijkstraSet(G)
-        if is_valid_network(G, Tcassidy): 
-            print("Cassidy Dijkstra: Average pairwise distance: {}".format(average_pairwise_distance(Tcassidy)))
-            write_output_file(Tcassidy, f"{output_dir}/{graph_name}.out")
+        T = dijkstraSet(G)
+        write_output_file(T, f"{output_dir}/{graph_name}.out")
+
+
