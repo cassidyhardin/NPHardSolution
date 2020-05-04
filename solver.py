@@ -538,7 +538,7 @@ if __name__ == '__main__' :
         print(graph_name)
         G = read_input_file(f"{input_dir}/{input_path}")
         Tmst = MST(G)
-        Tmst = primMSTwithHeuristic(G)
+        # Tmst = primMSTwithHeuristic(G)
         Tds = dijkstraSet(G)
         Tmishra = primMSTwithHeuristic(G)
         Tmin = nx.Graph()
