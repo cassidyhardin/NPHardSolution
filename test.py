@@ -56,6 +56,7 @@ if __name__ == "__main__":
         T_star = nx.minimum_spanning_tree(subG, weight='weight', algorithm='prim')
 
         # Removing unnecessary nodes
+        change = float('inf')
         while(change > 0):
             originalAvgPairDist = average_pairwise_distance(T)
             for solution_vertex in list(nx.nodes(T)):
@@ -70,6 +71,7 @@ if __name__ == "__main__":
             change = originalAvgPairDist - average_pairwise_distance(T)
 
         #Adding nodes if they improve average pairwise distance of the solution
+        change = float('inf')
         while(change > 0):
             originalAvgPairDist2 = average_pairwise_distance(T)
             for u, v, w in G.edges.data('weight'):
@@ -114,6 +116,7 @@ if __name__ == "__main__":
             change = originalAvgPairDist2 - average_pairwise_distance(T)
 
         # Removing unnecessary nodes after the additional nodes
+        change = float('inf')
         while(change > 0):
             originalAvgPairDist3 = average_pairwise_distance(T)
             for solution_vertex in list(nx.nodes(T)):

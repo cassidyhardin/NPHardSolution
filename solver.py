@@ -128,6 +128,7 @@ def primMSTwithHeuristic(G):
         # Remove nodes from the solution as long as the solution stays valid
         # The remval should reduce average pairwise distance reduces
         # Keeps iterating till there is no improvement
+        change = float('inf')
         while(change > 0):
             originalAvgPairDist = average_pairwise_distance(T)
             for solution_vertex in list(nx.nodes(T)):
@@ -173,6 +174,58 @@ def addNodes(G, originalT):
                 T.add_node(v)
                 T.add_edge(u, v, weight=w)
             else:
+                T_lvl2 = level2(G, T_star, cur)
+                if T_lvl2 == T_star:
+                    T_star.remove_edge(u, v)
+                    T_star.remove_node(v)
+                else:
+                    T = nx.Graph()
+                    T.add_nodes_from(T_lvl2)
+                    T.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+                    T_star = nx.Graph()
+                    T_star.add_nodes_from(T_lvl2)
+                    T_star.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+        elif v in nx.nodes(T) and u not in nx.nodes(T):
+            T_star.add_node(u)
+            T_star.add_edge(v, u, weight=w)
+            if average_pairwise_distance(T_star) < cur:
+                T.add_node(u)
+                T.add_edge(v, u, weight=w)
+            else:
+                T_lvl2 = level2(G, T_star, cur)
+                if T_lvl2 == T_star:
+                    T_star.remove_edge(v, u)
+                    T_star.remove_node(u)
+                else:
+                    T = nx.Graph()
+                    T.add_nodes_from(T_lvl2)
+                    T.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+                    T_star = nx.Graph()
+                    T_star.add_nodes_from(T_lvl2)
+                    T_star.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+    new = average_pairwise_distance(T)
+    if new < old and is_valid_network(G, T):
+        return T
+    else:
+        return originalT
+
+def level2(G, originalT, old):
+    T = nx.Graph()
+    T.add_nodes_from(originalT)
+    T.add_weighted_edges_from(originalT.edges.data('weight'))
+    T_star = nx.Graph()
+    T_star.add_nodes_from(originalT)
+    T_star.add_weighted_edges_from(originalT.edges.data('weight'))
+
+    for u, v, w in G.edges.data('weight'):
+        cur = average_pairwise_distance(T)
+        if u in nx.nodes(T) and v not in nx.nodes(T):
+            T_star.add_node(v)
+            T_star.add_edge(u, v, weight=w)
+            if average_pairwise_distance(T_star) < cur:
+                T.add_node(v)
+                T.add_edge(u, v, weight=w)
+            else:
                 T_star.remove_edge(u, v)
                 T_star.remove_node(v)
         elif v in nx.nodes(T) and u not in nx.nodes(T):
@@ -196,6 +249,7 @@ if __name__ == "__main__":
     output_d = "outputs"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
+        input_path = "small-1.in"
         graph_name = input_path.split(".")[0]
         G = read_input_file(f"{input_dir}/{input_path}")
         T = primMSTwithHeuristic(G)
@@ -210,7 +264,7 @@ if __name__ == "__main__":
                 print(graph_name, 'new solution invalid')
         else:
             print(graph_name)
-
+        break
 
 # def combine_outputs():
 #     output_dir = "outputs"
