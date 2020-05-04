@@ -5,9 +5,44 @@ import os
 import sys
 import matplotlib.pyplot as plt
 
+def level2(G, originalT, old):
+    T = nx.Graph()
+    T.add_nodes_from(originalT)
+    T.add_weighted_edges_from(originalT.edges.data('weight'))
+    T_star = nx.Graph()
+    T_star.add_nodes_from(originalT)
+    T_star.add_weighted_edges_from(originalT.edges.data('weight'))
+
+    t_nodes = list(nx.nodes(T))
+    for u, v, w in G.edges.data('weight'):
+        cur = average_pairwise_distance(T)
+        if u in nx.nodes(T) and v not in nx.nodes(T):
+            T_star.add_node(v)
+            T_star.add_edge(u, v, weight=w)
+            if average_pairwise_distance(T_star) < cur:
+                T.add_node(v)
+                T.add_edge(u, v, weight=w)
+            else:
+                T_star.remove_edge(u, v)
+                T_star.remove_node(v)
+        elif v in nx.nodes(T) and u not in nx.nodes(T):
+            T_star.add_node(u)
+            T_star.add_edge(v, u, weight=w)
+            if average_pairwise_distance(T_star) < cur:
+                T.add_node(u)
+                T.add_edge(v, u, weight=w)
+            else:
+                T_star.remove_edge(v, u)
+                T_star.remove_node(u)
+    new = average_pairwise_distance(T)
+    if new < old and is_valid_network(G, T):
+        return T
+    else:
+        return originalT
+
 if __name__ == "__main__":
-    output_dir = "outputs_3"
-    new_output_dir = "outputs_4"
+    output_dir = "outputs_4"
+    new_output_dir = "outputs_5"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
         graph_name = input_path.split(".")[0]
@@ -89,8 +124,17 @@ if __name__ == "__main__":
                     T.add_node(v)
                     T.add_edge(u, v, weight=w)
                 else:
-                    T_star.remove_edge(u, v)
-                    T_star.remove_node(v)
+                    T_lvl2 = level2(G, T_star, cur)
+                    if T_lvl2 == T_star:
+                        T_star.remove_edge(u, v)
+                        T_star.remove_node(v)
+                    else:
+                        T = nx.Graph()
+                        T.add_nodes_from(T_lvl2)
+                        T.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+                        T_star = nx.Graph()
+                        T_star.add_nodes_from(T_lvl2)
+                        T_star.add_weighted_edges_from(T_lvl2.edges.data('weight'))
             elif v in nx.nodes(T) and u not in nx.nodes(T):
                 T_star.add_node(u)
                 T_star.add_edge(v, u, weight=w)
@@ -98,8 +142,17 @@ if __name__ == "__main__":
                     T.add_node(u)
                     T.add_edge(v, u, weight=w)
                 else:
-                    T_star.remove_edge(v, u)
-                    T_star.remove_node(u)
+                    T_lvl2 = level2(G, T_star, cur)
+                    if T_lvl2 == T_star:
+                        T_star.remove_edge(v, u)
+                        T_star.remove_node(u)
+                    else:
+                        T = nx.Graph()
+                        T.add_nodes_from(T_lvl2)
+                        T.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+                        T_star = nx.Graph()
+                        T_star.add_nodes_from(T_lvl2)
+                        T_star.add_weighted_edges_from(T_lvl2.edges.data('weight'))
 
         for u, v, w in G.edges.data('weight'):
             cur = average_pairwise_distance(T)
@@ -110,8 +163,17 @@ if __name__ == "__main__":
                     T.add_node(v)
                     T.add_edge(u, v, weight=w)
                 else:
-                    T_star.remove_edge(u, v)
-                    T_star.remove_node(v)
+                    T_lvl2 = level2(G, T_star, cur)
+                    if T_lvl2 == T_star:
+                        T_star.remove_edge(u, v)
+                        T_star.remove_node(v)
+                    else:
+                        T = nx.Graph()
+                        T.add_nodes_from(T_lvl2)
+                        T.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+                        T_star = nx.Graph()
+                        T_star.add_nodes_from(T_lvl2)
+                        T_star.add_weighted_edges_from(T_lvl2.edges.data('weight'))
             elif v in nx.nodes(T) and u not in nx.nodes(T):
                 T_star.add_node(u)
                 T_star.add_edge(v, u, weight=w)
@@ -119,8 +181,17 @@ if __name__ == "__main__":
                     T.add_node(u)
                     T.add_edge(v, u, weight=w)
                 else:
-                    T_star.remove_edge(v, u)
-                    T_star.remove_node(u)
+                    T_lvl2 = level2(G, T_star, cur)
+                    if T_lvl2 == T_star:
+                        T_star.remove_edge(v, u)
+                        T_star.remove_node(u)
+                    else:
+                        T = nx.Graph()
+                        T.add_nodes_from(T_lvl2)
+                        T.add_weighted_edges_from(T_lvl2.edges.data('weight'))
+                        T_star = nx.Graph()
+                        T_star.add_nodes_from(T_lvl2)
+                        T_star.add_weighted_edges_from(T_lvl2.edges.data('weight'))
 
         for u, v, w in G.edges.data('weight'):
             cur = average_pairwise_distance(T)
@@ -172,3 +243,4 @@ if __name__ == "__main__":
                 print(graph_name, 'new solution invalid')
         else:
             print(graph_name)
+        break
