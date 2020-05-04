@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
         subG = nx.subgraph(G, T.nodes)
         T = nx.minimum_spanning_tree(subG, weight='weight', algorithm='prim')
-        T_star = nx.minimum_spanning_tree(G, weight='weight', algorithm='prim')
+        T_star = nx.minimum_spanning_tree(subG, weight='weight', algorithm='prim')
         for solution_vertex in list(nx.nodes(T)):
             T_star.remove_node(solution_vertex)
             if nx.is_dominating_set(G, nx.nodes(T_star)) and nx.is_connected(T_star) and average_pairwise_distance(T_star) < average_pairwise_distance(T):
@@ -171,4 +171,4 @@ if __name__ == "__main__":
             else:
                 print(graph_name, 'new solution invalid')
         else:
-            print(graph_name, old, new)
+            print(graph_name)
