@@ -249,22 +249,21 @@ if __name__ == "__main__":
     output_d = "outputs"
     input_dir = "inputs subset"
     for input_path in os.listdir(input_dir):
-        input_path = "small-1.in"
         graph_name = input_path.split(".")[0]
-        G = read_input_file(f"{input_dir}/{input_path}")
-        T = primMSTwithHeuristic(G)
-        old_T = read_output_file(f"{output_d}/{graph_name}.out", G)
-        old = average_pairwise_distance(old_T)
-        new = average_pairwise_distance(T)
-        if new < old:
-            if is_valid_network(G, T):
-                print(graph_name, old - new)
-                write_output_file(T, f"{output_dir}/{graph_name}.out")
+        if "medium" in graph_name or "large" in graph_name:
+            G = read_input_file(f"{input_dir}/{input_path}")
+            T = primMSTwithHeuristic(G)
+            old_T = read_output_file(f"{output_d}/{graph_name}.out", G)
+            old = average_pairwise_distance(old_T)
+            new = average_pairwise_distance(T)
+            if new < old:
+                if is_valid_network(G, T):
+                    print(graph_name, new)
+                    write_output_file(T, f"{output_dir}/{graph_name}.out")
+                else:
+                    print(graph_name, 'new solution invalid')
             else:
-                print(graph_name, 'new solution invalid')
-        else:
-            print(graph_name)
-        break
+                print(graph_name)
 
 # def combine_outputs():
 #     output_dir = "outputs"
