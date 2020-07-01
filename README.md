@@ -6,7 +6,7 @@ Each node in the graph represents a city with outgoing edges as the cost of the 
 
 Overall these algorithms are looking to minimize the cost of constructing a fiber network, the average pairwise distance between every cell tower constructed in our network. 
 
-$$$\frac{1}{{{T}\choose{2}}}\sum_{{u,v }  \in  {{T}\choose{2}}}^{} d(u,v)$$$
+$$\frac{1}{{{T}\choose{2}}}\sum_{{u,v }  \in  {{T}\choose{2}}}^{} d(u,v)$$
 
 Valid solutions are acyclic connected dominating sets, in other words trees such that every node in the graph is either in the solution tree or a direct neighbor. 
 
